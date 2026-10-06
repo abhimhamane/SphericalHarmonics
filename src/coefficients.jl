@@ -14,13 +14,13 @@ struct SHCoefficients{
     data::A
     lmax::Int
     repr::L
-    normaliziation::N
+    normalization::N
 end
 
 Base.eltype(::SHCoefficients{T}) where {T} = T
 maxdegree(data::SHCoefficients) = data.lmax
 repr(data::SHCoefficients) = data.repr
-normaliziation(data::SHCoefficients) = data.normaliziation
+normalization(data::SHCoefficients) = data.normalization
 
 @inline function check_lm(data::SHCoefficients, degree::Int, order::Int)
     lmax = maxdegree(data)

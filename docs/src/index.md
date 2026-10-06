@@ -4,4 +4,4 @@
 ## Contents
 
 ```@contents
-Depth = 2
+Depth = 2```

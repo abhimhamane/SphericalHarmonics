@@ -18,13 +18,13 @@ struct SHCoefficients{
 end
 
 Base.eltype(::SHCoefficients{T}) where {T} = T
-maxdegree(coeffs::SHCoefficients) = coeffs.lmax
-repr(coeffs::SHCoefficients) = coeffs.repr
-normaliziation(coeffs::SHCoefficients) = coeffs.normaliziation
+maxdegree(data::SHCoefficients) = data.lmax
+repr(data::SHCoefficients) = data.repr
+normaliziation(data::SHCoefficients) = data.normaliziation
 
-@inline function check_lm(coeffs::SHCoefficients, degree::Int, order::Int)
-    lmax = maxdegree(coeffs)
-    0 ≤ order ≤ degree ≤ lmax || throw(BoundsError(coeffs, (degree, order)))
+@inline function check_lm(data::SHCoefficients, degree::Int, order::Int)
+    lmax = maxdegree(data)
+    0 ≤ order ≤ degree ≤ lmax || throw(BoundsError(data, (degree, order)))
     return nothing
 end
 
@@ -40,35 +40,35 @@ function allocate_coefficients(::Type{T}, lmax::Int, repr::CS,
 end
 
 #getters
-@inline function C(coeffs::SHCoefficients{T, A, CS}, degree::Int, order::Int) where {T, A}
-    @boundscheck check_lm(coeffs, degree, order)
+@inline function C(data::SHCoefficients{T, A, CS}, degree::Int, order::Int) where {T, A}
+    @boundscheck check_lm(data, degree, order)
 
-    @inbounds return coeffs.coeffs[degree+1, order+1]
+    @inbounds return data.data[degree+1, order+1]
 end
 
-@inline function S(coeffs::SHCoefficients{T, A, CS}, degree::Int, order::Int) where {T, A}
-    @boundscheck check_lm(coeffs, degree, order)
+@inline function S(data::SHCoefficients{T, A, CS}, degree::Int, order::Int) where {T, A}
+    @boundscheck check_lm(data, degree, order)
     order == 0 && return throw(ArgumentError("order == 0 not defined"))
 
-    @inbounds return coeffs.coeffs[order, degree+1]
+    @inbounds return data.data[order, degree+1]
 end
 
 # setters
-@inline function setC!(coeffs::SHCoefficients{T, A, CS}, degree::Int, order::Int, val) where {T, A}
-    @boundscheck check_lm(coeffs, degree, order)
+@inline function setC!(data::SHCoefficients{T, A, CS}, degree::Int, order::Int, val) where {T, A}
+    @boundscheck check_lm(data, degree, order)
 
-    @inbounds coeffs.coeffs[degree+1, order+1] = val
-    return coeffs
+    @inbounds data.data[degree+1, order+1] = val
+    return data
 end
 
-@inline function setS!(coeffs::SHCoefficients{T, A, CS}, degree::Int, order::Int, val) where {T, A}
-    @boundscheck check_lm(coeffs, degree, order)
+@inline function setS!(data::SHCoefficients{T, A, CS}, degree::Int, order::Int, val) where {T, A}
+    @boundscheck check_lm(data, degree, order)
     if order == 0
         throw(ArgumentError("order == 0 not defined"))
-        return coeffs
+        return data
     end
-    @inbounds coeffs.coeffs[order, degree+1] = val
-    return coeffs
+    @inbounds data.data[order, degree+1] = val
+    return data
 end
 
 
@@ -84,47 +84,47 @@ end
 
 # getters
 @inline function C(
-    coeffs::SHCoefficients{T, A, SC},
+    data::SHCoefficients{T, A, SC},
     degree::Int,
     order::Int,
 ) where {T, A}
-    @boundscheck check_lm(coeffs, degree, order)
-    @inbounds return coeffs.coeffs[degree+1, coeffs.lmax+1+order]
+    @boundscheck check_lm(data, degree, order)
+    @inbounds return data.data[degree+1, data.lmax+1+order]
 
 end
 
 @inline function S(
-    coeffs::SHCoefficients{T, A, SC},
+    data::SHCoefficients{T, A, SC},
     degree::Int,
     order::Int,
 ) where {T, A}
-    @boundscheck check_lm(coeffs, degree, order)
+    @boundscheck check_lm(data, degree, order)
     order == 0 && throw(ArgumentError("order == 0 is invalid"))
-    @inbounds return coeffs.coeffs[degree+1, coeffs.lmax+1-order]
+    @inbounds return data.data[degree+1, data.lmax+1-order]
 end
 
 # setters
 @inline function setC!(
-    coeffs::SHCoefficients{T, A, SC}, 
+    data::SHCoefficients{T, A, SC}, 
     degree::Int, 
     order::Int, 
     val) where {T, A}
-    @boundscheck check_lm(coeffs, degree, order)
+    @boundscheck check_lm(data, degree, order)
 
-    @inbounds coeffs.coeffs[degree+1, coeffs.lmax+1+order] = val
-    return coeffs
+    @inbounds data.data[degree+1, data.lmax+1+order] = val
+    return data
 end
 
 
 @inline function setS!(
-    coeffs::SHCoefficients{T, A, SC}, 
+    data::SHCoefficients{T, A, SC}, 
     degree::Int, 
     order::Int, 
     val) where {T, A}
-    @boundscheck check_lm(coeffs, degree, order)
+    @boundscheck check_lm(data, degree, order)
     order == 0 && throw(ArgumentError("order == 0 is invalid"))
-    @inbounds coeffs.coeffs[degree+1, coeffs.lmax+1-order] = val
-    return coeffs
+    @inbounds data.data[degree+1, data.lmax+1-order] = val
+    return data
 end
 
 struct Orderwise <: AbstractSHCoeffRepresentation end

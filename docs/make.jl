@@ -11,3 +11,8 @@ makedocs(
         #"Legendre functions" => "legendre.md",
     ],
 )
+
+deploydocs(
+    repo = "github.com/abhimhamane/SphericalHarmonics.jl.git",
+    devbranch = "main",
+)

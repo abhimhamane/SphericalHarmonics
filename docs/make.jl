@@ -13,6 +13,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/abhimhamane/SphericalHarmonics.jl.git",
+    repo = "github.com/abhimhamane/SphericalHarmonics.git",
     devbranch = "main",
 )

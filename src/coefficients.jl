@@ -126,9 +126,3 @@ end
     @inbounds data.data[degree+1, data.lmax+1-order] = val
     return data
 end
-
-struct Orderwise <: AbstractSHCoeffRepresentation end
-
-coeff = allocate_coefficients(Float64, 5, SC(), FullyNormalized())
-
-coeff.data

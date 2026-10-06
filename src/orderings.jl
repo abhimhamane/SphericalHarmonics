@@ -2,7 +2,10 @@ abstract type AbstractSHCoeffOrdering end
 
 struct Orderwise <: AbstractSHCoeffOrdering end
 struct OrderwiseParityaware <: AbstractSHCoeffOrdering end
-struct Degreewise <: AbstractSHCoeffOrdering end
+
+struct OrderwiseTruncatedOrder <: AbstractSHCoeffOrdering 
+    mmax::Int
+end
 
 struct SHCoeffParameterVector{
     T,

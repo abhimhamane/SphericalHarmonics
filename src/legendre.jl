@@ -70,6 +70,7 @@ Approach follows column recursion formulas in a 3-step process (more details see
     4. also handles special cases and invlid inputs
 
     # Inputs
+    - ::AbstractSHNormalization (currently only FullyNormalized() implemented)
     - `l`: degree 
     - `m`: order
     - `theta`: co-latitude [radians]
@@ -127,12 +128,12 @@ end
 
 #Plm(FullyNormalized(), 2,0, π/3)
 
-struct AssociatedLegendrePlan{N, A, B, V}
+struct AssociatedLegendrePlan{T, N}
     lmax::Int
     normalization::N
-    anm::A
-    bnm::B
-    coeffm::V
+    anm::Matrix{T}
+    bnm::Matrix{T}
+    coeffm::Vector{T}
 end
 
 function AssociatedLegendrePlan(::Type{T}, lmax::Int, 
@@ -161,10 +162,25 @@ function AssociatedLegendrePlan(::Type{T}, lmax::Int,
     return AssociatedLegendrePlan(lmax, norm, coeff_anm, coeff_bnm, sectorial_coeffm)
 end
 
-function allocate_plm(plan::AssociatedLegendrePlan{T}) where {T}
-    return Matrix{T}(undef, plan.lmax+1, plan.lmax+1)
+function allocate_plm(plan::AssociatedLegendrePlan{T, N}) where {T<:AbstractFloat, N<:AbstractSHNormalization}
+    return zeros(T, plan.lmax+1, plan.lmax+1)
 end
 
 function plm!(plm_mat::AbstractMatrix{T}, plan::AssociatedLegendrePlan{T}, θ::Real) where {T}
-    error("plm! not implemented yet...")
+    u, t = sincos(θ)
+    plm_mat[1, 1] = 1.0
+    plm_mat[2, 1] = sqrt(3)*t
+    plm_mat[2, 2] = sqrt(3)*u
+
+    # sectoral Plm - diagonal
+    @inbounds for m = 2:plan.lmax
+        plm_mat[m+1, m+1] = u*plan.coeffm[m+1]*plm_mat[m,m]
+        plm_mat[m+1, m] = plan.anm[m+1,m]*t*plm_mat[m,m]
+    end
+
+    @inbounds for m = 0:plan.lmax-2
+        @inbounds for n = m+2:plan.lmax
+            plm_mat[n+1, m+1] = plan.anm[n+1,m+1]*t*plm_mat[n, m+1] - plan.bnm[n+1,m+1]*plm_mat[n-1, m+1] 
+        end
+    end
 end

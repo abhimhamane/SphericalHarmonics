@@ -6,7 +6,7 @@ makedocs(
     sitename = "SphericalHarmonics.jl",
     pages = [
         "Home" => "index.md",
-        #"Coefficients" => "coefficients.md",
+        "Api" => "api.md",
         #"Parameter orderings" => "orderings.md",
         #"Legendre functions" => "legendre.md",
     ],

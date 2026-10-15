@@ -54,11 +54,6 @@ computes the coefficient for normalizing sectorial recursion part of PLM computa
     return sqrt((2*m + 1)/(2*m))
 end
 
-@inline function Fnm(::FullyNormalized, n::Int, m::Int)
-    n == m && return 0
-    return sqrt(((n-m) * (n+m) * (2*n + 1)) / (2*n - 1))
-end
-
 """
     Plm(l::Int, m::Int, theta::Float64)
 Computes associated legendre polynomials.
@@ -184,3 +179,10 @@ function plm!(plm_mat::AbstractMatrix{T}, plan::AssociatedLegendrePlan{T}, θ::R
         end
     end
 end
+
+
+@inline function Fnm(::FullyNormalized, n::Int, m::Int)
+    n == m && return 0
+    return sqrt(((n-m) * (n+m) * (2*n + 1)) / (2*n - 1))
+end
+
